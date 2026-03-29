@@ -8,6 +8,45 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const handleLogin = async (e) => {
+
+  e.preventDefault();
+
+  try {
+
+    const res = await fetch("http://localhost:8000/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+
+      alert("Login successful");
+
+      window.location.href = "/onboarding";
+
+    } else {
+
+      alert(data.message);
+
+    }
+
+  } catch (error) {
+
+    alert("Server error");
+
+  }
+
+};
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-grid-pattern relative">
       <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
@@ -21,7 +60,7 @@ export default function Login() {
           <p className="text-sm text-muted-foreground">Sign in to your account</p>
         </div>
 
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-4" onSubmit={handleLogin}>
           <div>
             <label className="text-sm font-medium mb-1.5 block">Email</label>
             <Input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -33,9 +72,9 @@ export default function Login() {
           <div className="flex justify-end">
             <a href="#" className="text-xs text-primary hover:underline">Forgot password?</a>
           </div>
-          <Button variant="hero" className="w-full" size="lg" asChild>
-            <Link to="/onboarding">Login</Link>
-          </Button>
+          <Button variant="hero" className="w-full" size="lg">
+         Login
+        </Button>
           <Button variant="outline" className="w-full" size="lg">
             Continue with Google
           </Button>

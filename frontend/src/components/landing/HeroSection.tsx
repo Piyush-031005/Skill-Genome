@@ -37,11 +37,12 @@ export default function HeroSection() {
               Skill Intelligence Platform
             </div>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
-              Decode Your{" "}
-              <span className="text-gradient-green">Skill Genome</span>
+              Decode Your Skills.{" "}
+              <span className="text-gradient-green">Track Your Growth.</span>{" "}
+              Crack Your Dream Company.
             </h1>
             <p className="text-lg text-muted-foreground max-w-lg mb-8 leading-relaxed">
-              Understand your real skill level, compare with peers, and build a roadmap to top tech companies.
+              Analyze your technical skills, compete in fair divisions, and build a personalized roadmap to top tech companies.
             </p>
             <div className="flex gap-4">
               <Button variant="hero" size="lg" asChild>

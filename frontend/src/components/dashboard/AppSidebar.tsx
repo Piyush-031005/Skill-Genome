@@ -1,13 +1,16 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Brain, Users, Map, BookOpen, User, Settings, Dna } from "lucide-react";
+import { LayoutDashboard, Brain, Users, Map, BookOpen, User, Settings, Dna, Trophy, FileText, ClipboardCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "Skill Analysis", path: "/dashboard/skills", icon: Brain },
   { label: "Peer Comparison", path: "/dashboard/peers", icon: Users },
+  { label: "Ranking", path: "/dashboard/ranking", icon: Trophy },
   { label: "Roadmap", path: "/dashboard/roadmap", icon: Map },
   { label: "Resources", path: "/dashboard/resources", icon: BookOpen },
+  { label: "Resume Analyzer", path: "/dashboard/resume", icon: FileText },
+  { label: "Mock Tests", path: "/dashboard/mock-tests", icon: ClipboardCheck },
   { label: "Profile", path: "/dashboard/profile", icon: User },
   { label: "Settings", path: "/dashboard/settings", icon: Settings },
 ];

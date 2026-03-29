@@ -16,6 +16,10 @@ import Roadmap from "./pages/dashboard/Roadmap";
 import Resources from "./pages/dashboard/Resources";
 import Profile from "./pages/dashboard/Profile";
 import SettingsPage from "./pages/dashboard/Settings";
+import Ranking from "./pages/dashboard/Ranking";
+import ResumeAnalyzer from "./pages/dashboard/ResumeAnalyzer";
+import MockTests from "./pages/dashboard/MockTests";
+import CompanyDashboard from "./pages/CompanyDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,12 +36,16 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/company" element={<CompanyDashboard />} />
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<DashboardHome />} />
               <Route path="skills" element={<SkillAnalysis />} />
               <Route path="peers" element={<PeerComparison />} />
+              <Route path="ranking" element={<Ranking />} />
               <Route path="roadmap" element={<Roadmap />} />
               <Route path="resources" element={<Resources />} />
+              <Route path="resume" element={<ResumeAnalyzer />} />
+              <Route path="mock-tests" element={<MockTests />} />
               <Route path="profile" element={<Profile />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>

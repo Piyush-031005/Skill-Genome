@@ -3,13 +3,14 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dna } from "lucide-react";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../lib/firebase";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async (e) => {
-
   e.preventDefault();
 
   try {
@@ -46,7 +47,38 @@ export default function Login() {
   }
 
 };
+const handleGoogleLogin = async () => {
+  const provider = new GoogleAuthProvider();
 
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    console.log(user);
+
+    // 🔥 YE ADD KARNA HAI
+    localStorage.setItem("user", JSON.stringify(user));
+
+    await fetch("http://10.12.54.30:8000/api/auth/google", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: user.displayName,
+        email: user.email,
+        photo: user.photoURL
+      })
+    });
+
+    alert("Google login successful ✅");
+    window.location.href = "/onboarding";
+
+  } catch (error) {
+    console.log(error);
+    alert("Google login failed ❌");
+  }
+};
   return (
     <div className="min-h-screen flex items-center justify-center bg-grid-pattern relative">
       <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
@@ -75,9 +107,15 @@ export default function Login() {
           <Button variant="hero" className="w-full" size="lg">
          Login
         </Button>
-          <Button variant="outline" className="w-full" size="lg">
-            Continue with Google
-          </Button>
+          <Button
+  type="button"
+  variant="outline"
+  className="w-full"
+  size="lg"
+  onClick={handleGoogleLogin}
+>
+  Continue with Google
+</Button>
         </form>
 
         <p className="text-center text-sm text-muted-foreground mt-6">

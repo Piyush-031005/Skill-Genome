@@ -21,6 +21,7 @@ import ResumeAnalyzer from "./pages/dashboard/ResumeAnalyzer";
 import MockTests from "./pages/dashboard/MockTests";
 import CompanyDashboard from "./pages/CompanyDashboard";
 import NotFound from "./pages/NotFound";
+import ProfileView from "./pages/ProfileView";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,8 @@ const App = () => (
               <Route path="mock-tests" element={<MockTests />} />
               <Route path="profile" element={<Profile />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="profile/:username" element={<ProfileView />} />
+            
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

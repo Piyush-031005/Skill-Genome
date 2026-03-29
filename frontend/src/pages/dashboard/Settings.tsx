@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTheme } from "@/lib/theme";
 import { Sun, Moon } from "lucide-react";
+const user = JSON.parse(localStorage.getItem("user"));
 
 export default function SettingsPage() {
   const { theme, toggle } = useTheme();
-  const [name, setName] = useState("Student");
-  const [email, setEmail] = useState("student@example.com");
+  const [name, setName] = useState(user?.displayName || "Student");
+  const [email, setEmail] = useState(user?.email || "student@example.com");
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -18,6 +19,12 @@ export default function SettingsPage() {
 
       <div className="bg-card border border-border rounded-xl p-6 space-y-4">
         <h3 className="font-semibold">Profile</h3>
+
+          <img 
+    src={user?.photoURL} 
+    alt="profile" 
+    className="w-16 h-16 rounded-full mb-4"/>
+    
         <div>
           <label className="text-sm font-medium mb-1.5 block">Name</label>
           <Input value={name} onChange={(e) => setName(e.target.value)} />

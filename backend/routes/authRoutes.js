@@ -1,7 +1,9 @@
-const express = require("express");
+import express from "express";
+import fetch from "node-fetch";
+import bcrypt from "bcryptjs";
+import User from "../models/User.js";
+
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const User = require("../models/User");
 
 // test route
 router.get("/test", (req, res) => {
@@ -11,7 +13,6 @@ router.get("/test", (req, res) => {
 // signup
 router.post("/signup", async (req, res) => {
   try {
-
     const { name, email, password } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -31,21 +32,17 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// login route
+// login
 router.post("/login", async (req, res) => {
-
   try {
-
     const { email, password } = req.body;
 
-    // user find
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
 
-    // password check
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
@@ -62,13 +59,79 @@ router.post("/login", async (req, res) => {
     });
 
   } catch (error) {
-
-    res.status(500).json({
-      message: "Login error"
-    });
-
+    res.status(500).json({ message: "Login error" });
   }
-
 });
 
-module.exports = router;
+// 🔥 LeetCode API
+router.get("/leetcode/:username", async (req, res) => {
+  const username = req.params.username;
+
+  try {
+    const response = await fetch("https://leetcode.com/graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: `
+        query getUserProfile($username: String!) {
+          matchedUser(username: $username) {
+            username
+            submitStats {
+              acSubmissionNum {
+                difficulty
+                count
+              }
+            }
+          }
+        }`,
+        variables: { username },
+      }),
+    });
+
+    const data = await response.json();
+
+    res.json(data.data.matchedUser);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch LeetCode data" });
+  }
+});
+
+router.post("/save-score", async (req, res) => {
+  try {
+    const { leetcodeId, score } = req.body;
+
+    let user = await User.findOne({ leetcodeId });
+
+    if (!user) {
+      user = new User({
+        name: leetcodeId,
+        email: leetcodeId + "@temp.com",
+        password: "123456",
+        leetcodeId,
+        score
+      });
+    } else {
+      user.score = score;
+    }
+
+    await user.save();
+
+    res.json({ message: "Score saved" });
+
+  } catch (error) {
+    res.status(500).json({ message: "Error saving score" });
+  }
+});
+
+router.get("/leaderboard", async (req, res) => {
+  try {
+    const users = await User.find().sort({ score: -1 });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Error" });
+  }
+});
+
+export default router;

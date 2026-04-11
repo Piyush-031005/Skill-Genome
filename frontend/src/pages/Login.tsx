@@ -7,15 +7,17 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../lib/firebase";
 
 export default function Login() {
+  const API = import.meta.env.VITE_API_URL;
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // ✅ NORMAL LOGIN (FIXED API)
-  const handleLogin = async (e) => {
+  // ✅ NORMAL LOGIN
+  const handleLogin = async (e: any) => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:8000/api/auth/login", {
+      const res = await fetch(`${API}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -41,11 +43,10 @@ export default function Login() {
     }
   };
 
-  // ✅ GOOGLE LOGIN (FULL FIXED)
+  // ✅ GOOGLE LOGIN
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
 
-    // 🔥 FORCE ACCOUNT SELECTION
     provider.setCustomParameters({
       prompt: "select_account"
     });
@@ -59,8 +60,8 @@ export default function Login() {
       // Save locally
       localStorage.setItem("user", JSON.stringify(user));
 
-      // ✅ SAME ORIGIN BACKEND (FIXED)
-      const res = await fetch("http://localhost:8000/api/auth/google", {
+      // ✅ FIXED (NO localhost now)
+      const res = await fetch(`${API}/api/auth/google`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -81,7 +82,7 @@ export default function Login() {
         alert(data.message || "Backend error");
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.log("FULL GOOGLE ERROR:", error);
       alert(error.message);
     }

@@ -13,7 +13,11 @@ const app = express();
 
 // ✅ CORS FIX (VERY IMPORTANT)
 app.use(cors({
-  origin: "http://localhost:8080",
+  origin: [
+  "http://localhost:5173",
+  "https://skill-genomex.vercel.app",
+  /\.vercel\.app$/   // 🔥 sab preview links allow
+],
   credentials: true
 }));
 

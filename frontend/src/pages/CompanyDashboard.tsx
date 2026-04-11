@@ -46,7 +46,7 @@ export default function CompanyDashboard() {
 
   // 🔥 Fetch real users
   useEffect(() => {
-    fetch("http://localhost:8000/api/auth/leaderboard")
+    fetch(`${import.meta.env.VITE_API_URL}/api/auth/leaderboard`)
       .then((res) => res.json())
       .then((data) => setUsers(data))
       .catch((err) => console.log(err));

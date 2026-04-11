@@ -1,9 +1,12 @@
 import mongoose from "mongoose";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 const connectDB = async () => {
   try {
     await mongoose.connect(
-      "mongodb+srv://admin:admin123@cluster0.cblaqxy.mongodb.net/skillgenome?retryWrites=true&w=majority"
+      process.env.MONGO_URI
     );
 
     console.log("MongoDB Connected");

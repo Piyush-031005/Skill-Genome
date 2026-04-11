@@ -5,7 +5,7 @@ import { Clock, BookOpen } from "lucide-react";
 const categories = ["All", "DSA Practice", "System Design", "Project Ideas", "Interview Prep"];
 
 const resources = [
-  { title: "NeetCode 150", category: "DSA Practice", difficulty: "Medium", time: "40 hrs", desc: "Curated list of LeetCode problems." },
+  { title: "LeetCode 150", category: "DSA Practice", difficulty: "Medium", time: "40 hrs", desc: "Curated list of LeetCode problems." },
   { title: "System Design Primer", category: "System Design", difficulty: "Hard", time: "20 hrs", desc: "Learn scalable system design." },
   { title: "Full Stack Open", category: "Project Ideas", difficulty: "Medium", time: "60 hrs", desc: "Build modern full-stack apps." },
   { title: "Grokking the Interview", category: "Interview Prep", difficulty: "Medium", time: "30 hrs", desc: "Pattern-based problem solving." },

@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
-// config (same rahega)
 const firebaseConfig = {
   apiKey: "AIzaSyBuPFvq0_Ri9wFhn9EQ-67TdUd81UNuu80",
   authDomain: "skill-genome-2afd7.firebaseapp.com",
@@ -12,8 +12,7 @@ const firebaseConfig = {
   measurementId: "G-KY3KTCGSM8"
 };
 
-// initialize
 const app = initializeApp(firebaseConfig);
 
-// ✅ IMPORTANT (ye missing tha)
 export const auth = getAuth(app);
+export const db = getFirestore(app);

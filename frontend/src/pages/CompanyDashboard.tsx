@@ -17,7 +17,11 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"; // ✅ FIX
+import { onAuthStateChanged } from "firebase/auth"; // ✅ FIX
+import { auth } from "@/lib/firebase"; // ✅ FIX
+
+// ✅ FIX: import upar shift kiya
 import {
   Radar,
   RadarChart,
@@ -32,6 +36,13 @@ export default function CompanyDashboard() {
   const [users, setUsers] = useState<any[]>([]);
   const [roleFilter, setRoleFilter] = useState("All Roles");
   const [search, setSearch] = useState("");
+
+  // ✅ FIX: auth listener sahi jagah
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      console.log("Auth user:", user);
+    });
+  }, []);
 
   // 🔥 Fetch real users
   useEffect(() => {

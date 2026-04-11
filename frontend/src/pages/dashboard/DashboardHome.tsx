@@ -1,203 +1,170 @@
-import { useEffect, useState } from "react";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
-import { db, auth } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
 import { motion } from "framer-motion";
 import {
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  Radar,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
 } from "recharts";
-import { AlertTriangle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
 
 export default function DashboardHome() {
-
   const [userData, setUserData] = useState<any>(null);
-  const [peerAvg, setPeerAvg] = useState<any>(null);
 
-  // 🔥 FETCH FUNCTION (separate)
-  const fetchData = async (user: any) => {
+  // 🔥 FETCH USER DATA
+  useEffect(() => {
+    const fetchData = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
 
-    // ✅ current user
-    const userRef = doc(db, "users", user.uid);
-    const snap = await getDoc(userRef);
+      const docRef = doc(db, "users", user.uid);
+      const snap = await getDoc(docRef);
 
-    let currentUserData = null;
-
-    if (snap.exists()) {
-      currentUserData = snap.data();
-      setUserData(currentUserData);
-    }
-
-    // ✅ all users
-    const querySnapshot = await getDocs(collection(db, "users"));
-
-    let total = {
-      dsa: 0,
-      dev: 0,
-      systemDesign: 0,
-      projects: 0,
-      problemSolving: 0,
-      communication: 0,
+      if (snap.exists()) {
+        setUserData(snap.data());
+      }
     };
 
-    let count = 0;
-
-    querySnapshot.forEach((docItem) => {
-      const d = docItem.data();
-
-      // ❌ skip yourself
-      if (docItem.id === user.uid) return;
-
-      if (
-        d.skills &&
-        d.role === currentUserData?.role &&
-        d.company === currentUserData?.company
-      ) {
-        total.dsa += d.skills.dsa || 0;
-        total.dev += d.skills.dev || 0;
-        total.systemDesign += d.skills.systemDesign || 0;
-        total.projects += d.skills.projects || 0;
-        total.problemSolving += d.skills.problemSolving || 0;
-        total.communication += d.skills.communication || 0;
-        count++;
-      }
-    });
-
-    // ✅ avg calc
-    if (count > 0) {
-      setPeerAvg({
-        dsa: total.dsa / count,
-        dev: total.dev / count,
-        systemDesign: total.systemDesign / count,
-        projects: total.projects / count,
-        problemSolving: total.problemSolving / count,
-        communication: total.communication / count,
-      });
-    } else {
-      setPeerAvg({
-        dsa: 0,
-        dev: 0,
-        systemDesign: 0,
-        projects: 0,
-        problemSolving: 0,
-        communication: 0,
-      });
-    }
-  };
-
-  // 🔥 AUTH LISTENER (FIXED)
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        fetchData(user);
-      }
-    });
-
-    return () => unsubscribe();
+    fetchData();
   }, []);
 
-  // 🔥 DATA
+  // 🔥 HEXAGON DATA (6 SKILLS FIXED)
   const radarData = userData
     ? [
-        { skill: "DSA", value: userData.skills.dsa },
-        { skill: "Development", value: userData.skills.dev },
-        { skill: "Projects", value: userData.skills.projects },
-        { skill: "System Design", value: userData.skills.systemDesign },
-        { skill: "Problem Solving", value: userData.skills.problemSolving },
+        { skill: "DSA", value: userData.skills?.dsa || 0 },
+        { skill: "Development", value: userData.skills?.dev || 0 },
+        { skill: "Projects", value: userData.skills?.projects || 0 },
+        { skill: "System Design", value: userData.skills?.systemDesign || 0 },
+        { skill: "Problem Solving", value: userData.skills?.problemSolving || 0 },
+        { skill: "Communication", value: userData.skills?.communication || 0 }, // ✅ IMPORTANT
       ]
     : [];
 
-  const peerData =
-    userData && peerAvg
-      ? [
-          { name: "DSA", you: userData.skills.dsa, peers: peerAvg.dsa },
-          { name: "Dev", you: userData.skills.dev, peers: peerAvg.dev },
-          { name: "Projects", you: userData.skills.projects, peers: peerAvg.projects },
-          { name: "Design", you: userData.skills.systemDesign, peers: peerAvg.systemDesign },
-          { name: "Solving", you: userData.skills.problemSolving, peers: peerAvg.problemSolving },
-        ]
-      : [];
-
-  const progressSkills = userData
-    ? [
-        { name: "DSA", value: userData.skills.dsa, recommended: 80 },
-        { name: "Development", value: userData.skills.dev, recommended: 70 },
-        { name: "Projects", value: userData.skills.projects, recommended: 65 },
-        { name: "System Design", value: userData.skills.systemDesign, recommended: 60 },
-      ]
-    : [];
-
-  if (!userData) {
-    return <div className="text-center mt-10 text-white">Loading...</div>;
-  }
+  const peerData = [
+    { name: "DSA", you: 62, peers: 50 },
+    { name: "Dev", you: 74, peers: 36 },
+    { name: "Projects", you: 62, peers: 30 },
+    { name: "Design", you: 61, peers: 30 },
+    { name: "Solving", you: 89, peers: 45 },
+  ];
 
   return (
     <div className="space-y-6">
 
+      {/* HEADER */}
       <div>
-        <h1 className="text-2xl font-bold mb-1">Dashboard</h1>
+        <h1 className="text-2xl font-bold mb-1">🚀 Dashboard</h1>
         <p className="text-muted-foreground text-sm">
           Your Skill Genome at a glance.
         </p>
       </div>
 
+      {/* GRID */}
       <div className="grid lg:grid-cols-2 gap-6">
 
-        {/* Radar */}
-        <motion.div className="bg-card border border-border rounded-xl p-6">
+        {/* 🔥 HEXAGON RADAR */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-card border border-border rounded-xl p-6"
+        >
           <h3 className="font-semibold mb-4">Skill Radar</h3>
-          <ResponsiveContainer width="100%" height={280}>
-            <RadarChart data={radarData}>
-              <PolarGrid />
-              <PolarAngleAxis dataKey="skill" />
-              <Radar dataKey="value" stroke="#22C55E" fill="#22C55E" fillOpacity={0.2} />
+
+          <ResponsiveContainer width="100%" height={340}>
+            <RadarChart
+              cx="50%"
+              cy="50%"
+              outerRadius="75%"
+              data={radarData}
+            >
+              <PolarGrid stroke="hsl(var(--border))" />
+
+              <PolarAngleAxis
+                dataKey="skill"
+                tick={{
+                  fill: "hsl(var(--muted-foreground))",
+                  fontSize: 13,
+                }}
+              />
+
+              <Radar
+                dataKey="value"
+                stroke="#22C55E"
+                fill="#22C55E"
+                fillOpacity={0.25}
+                strokeWidth={2}
+              />
             </RadarChart>
           </ResponsiveContainer>
         </motion.div>
 
-        {/* Peer */}
-        <motion.div className="bg-card border border-border rounded-xl p-6">
+
+        {/* 📊 BAR GRAPH */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-card border border-border rounded-xl p-6"
+        >
           <h3 className="font-semibold mb-4">You vs Peers</h3>
-          <ResponsiveContainer width="100%" height={280}>
+
+          <ResponsiveContainer width="100%" height={340}>
             <BarChart data={peerData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis domain={[0, 100]} /> {/* 🔥 FIXED */}
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+
+              <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" />
+              <YAxis domain={[0, 100]} stroke="hsl(var(--muted-foreground))" />
+
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#111",
+                  border: "1px solid #333",
+                }}
+              />
+
               <Legend />
-              <Bar dataKey="you" fill="#22C55E" />
-              <Bar dataKey="peers" fill="#FACC15" />
+
+              <Bar dataKey="you" fill="#22C55E" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="peers" fill="#EAB308" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
-
       </div>
 
-      {/* Progress */}
+
+      {/* 📈 SKILL PROGRESS */}
       <div className="bg-card border border-border rounded-xl p-6">
         <h3 className="font-semibold mb-4">Skill Progress</h3>
-        {progressSkills.map((s) => (
-          <div key={s.name}>
-            <div className="flex justify-between text-sm">
-              <span>{s.name}</span>
-              <span>{s.value}% / {s.recommended}%</span>
+
+        {radarData.map((skill, i) => (
+          <div key={i} className="mb-4">
+
+            <div className="flex justify-between text-sm mb-1">
+              <span>{skill.skill}</span>
+              <span className="text-muted-foreground">
+                {skill.value}%
+              </span>
             </div>
-            <div className="h-2 bg-gray-700 rounded">
-              <div className="h-full bg-green-500" style={{ width: `${s.value}%` }} />
+
+            <div className="h-2 bg-muted rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-primary rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${skill.value}%` }}
+                transition={{ duration: 0.8 }}
+              />
             </div>
+
           </div>
         ))}
-      </div>
-
-      {/* Gap */}
-      <div className="bg-card border border-yellow-500 rounded-xl p-6 flex gap-3">
-        <AlertTriangle className="text-yellow-400" />
-        <div>
-          <h3 className="font-semibold">Skill Gap: System Design</h3>
-          <p className="text-sm text-muted-foreground">
-            Improve backend & system design skills.
-          </p>
-        </div>
       </div>
 
     </div>

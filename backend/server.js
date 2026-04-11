@@ -4,14 +4,20 @@ import dotenv from "dotenv";
 
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
-import resumeRoutes from "./routes/resumeRoutes.js"; // ✅ NEW
+import resumeRoutes from "./routes/resumeRoutes.js";
+import mockTestRoutes from "./routes/mockTestRoutes.js";
 
 dotenv.config();
 
 const app = express();
 
+// ✅ CORS FIX (VERY IMPORTANT)
+app.use(cors({
+  origin: "http://localhost:8080",
+  credentials: true
+}));
+
 // middleware
-app.use(cors());
 app.use(express.json());
 
 // database connect
@@ -22,18 +28,18 @@ app.get("/", (req, res) => {
   res.send("Backend Running");
 });
 
-// auth routes (OLD — KEEP SAME)
+// ✅ ROUTES (ORDER IMPORTANT)
+
+// mock test route
+app.use("/api/mocktest", mockTestRoutes);
+
+// auth routes
 app.use("/api/auth", authRoutes);
 
-// ✅ NEW: Resume Analyzer Route
+// resume routes
 app.use("/api/resume", resumeRoutes);
 
-// server start
-app.listen(8000, () => {
-  console.log("🚀 Server running on port 8000");
-});
-
-// google test route (OLD — KEEP SAME)
+// google test route
 app.post("/api/auth/google", async (req, res) => {
   try {
     const { name, email, photo } = req.body;
@@ -48,4 +54,9 @@ app.post("/api/auth/google", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
+});
+
+// server start
+app.listen(8000, () => {
+  console.log("🚀 Server running on port 8000");
 });

@@ -4,10 +4,12 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/lib/theme";
+
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Onboarding from "./pages/Onboarding";
+
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 import DashboardHome from "./pages/dashboard/DashboardHome";
 import SkillAnalysis from "./pages/dashboard/SkillAnalysis";
@@ -19,11 +21,18 @@ import SettingsPage from "./pages/dashboard/Settings";
 import Ranking from "./pages/dashboard/Ranking";
 import ResumeAnalyzer from "./pages/dashboard/ResumeAnalyzer";
 import MockTests from "./pages/dashboard/MockTests";
+
 import CompanyDashboard from "./pages/CompanyDashboard";
 import NotFound from "./pages/NotFound";
 import ProfileView from "./pages/ProfileView";
 
+// ✅ correct import
+import TestPage from "./pages/TestPages";
+
 const queryClient = new QueryClient();
+
+// ❌ popup error remove
+window.alert = () => {};
 
 const App = () => (
   <ThemeProvider>
@@ -33,11 +42,18 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+
+            {/* PUBLIC */}
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/company" element={<CompanyDashboard />} />
+
+            {/* 🔥 FINAL FIX: TEST WITH ID */}
+            <Route path="/test/:id" element={<TestPage />} />
+
+            {/* DASHBOARD */}
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<DashboardHome />} />
               <Route path="skills" element={<SkillAnalysis />} />
@@ -50,9 +66,11 @@ const App = () => (
               <Route path="profile" element={<Profile />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="profile/:username" element={<ProfileView />} />
-            
             </Route>
+
+            {/* 404 */}
             <Route path="*" element={<NotFound />} />
+
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
